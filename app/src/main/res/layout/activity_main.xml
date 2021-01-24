@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/chose_emmc"
+        android:text="选择芯片"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myclick"/>
+
+    <TextView
+        android:id="@+id/fw_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="未选择emmc" />
+
+    <Button
+        android:id="@+id/chose_bin"
+        android:text="选择更新文件"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myclick"/>
+
+    <Spinner
+        android:id="@+id/bin_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="未选择更新文件" />
+
+    <Button
+        android:id="@+id/update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myclick"
+        android:text="更新" />
+    <Button
+        android:id="@+id/read"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myclick"
+        android:text="查看信息" />
+    <Button
+        android:id="@+id/help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="myclick"
+        android:text="帮助" />
+
+</LinearLayout>
