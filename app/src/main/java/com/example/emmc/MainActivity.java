@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     static private List<String> buffer = new ArrayList<String>();
     private String mmcblkpath = new String();
     private String filepath = new String();
+    private String IOExceptions = new String();
     private Spinner bin;
     private CopyElfs ce;
     private TextView tv_fw; // 版本号显示文本框
@@ -120,17 +121,23 @@ public class MainActivity extends AppCompatActivity {
 
         // 有无获取到设备
         if(devices.length == 0){
-            dialog.setMessage("未找到emmc设备");
+            dialog.setTitle("未找到eMMC");
+            if(IOExceptions.isEmpty())
+                dialog.setMessage("该设备无SCY可读的mmcblk");
+            else
+                dialog.setMessage("错误原因:\n" + IOExceptions);
         }
-        else
+        else{
+            dialog.setTitle ("选择eMMC块");
             dialog.setItems(devices, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     mmcblkpath = devices[which].toString();
-                        ShowMessage(mmcblkpath);
-                        ShowEmmcblkFw(mmcblkpath);
+                    ShowMessage(mmcblkpath);
+                    ShowEmmcblkFw(mmcblkpath);
                 }
             });
+        }
         // show()方法显示对话框
         dialog.show ();
     }
@@ -194,16 +201,23 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        List<String> err =  new ArrayList<String>();
         for (int i = 0; i < buffer.size(); i++) {
             if(buffer.get(i).contains("fw version"))
-               fw =  String.valueOf(buffer.get(i));
+                fw =  String.valueOf(buffer.get(i));
+            else if(buffer.get(i).startsWith("error:")){
+                err.add(String.valueOf(buffer.get(i)));
+            }
         }
         buffer.clear();
         if(!fw.isEmpty()){
             fw = mmcblkpath + " " + fw;
             tv_fw.setText(fw);
         }else{
-            tv_fw.setText("读取"+mmcblkpath+"版本号失败");
+            tv_fw.setText(null);
+            tv_fw.append("读取"+mmcblkpath+"版本号失败\n");
+            for (int i = 0; i < err.size(); i++)
+                tv_fw.append(err.get(i).toString());
         }
     }
 
@@ -215,10 +229,13 @@ public class MainActivity extends AppCompatActivity {
     * 将list类型转换为String[]
     * */
     private String[] list_to_array() {
+        IOExceptions = "";
         List<String> list = new ArrayList<String>();
         for (int i = 0; i < buffer.size(); i++) {
             if(buffer.get(i).startsWith("/dev/block"))
                 list.add(buffer.get(i));
+            else if(buffer.get(i).startsWith("IOException:"))
+                IOExceptions += buffer.get(i) + '\n';
         }
         String[] array = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {

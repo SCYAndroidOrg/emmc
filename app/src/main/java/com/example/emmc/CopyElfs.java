@@ -131,8 +131,9 @@ public class CopyElfs {
         DataOutputStream dos = null;
         BufferedReader br = null;
         BufferedReader err = null;
+        String shell = "sh";
         try {
-            Process p = Runtime.getRuntime().exec("sh");// 获取root
+            Process p = Runtime.getRuntime().exec(shell);// 获取root
 
             dos = new DataOutputStream(p.getOutputStream());// 写入流
             br = new BufferedReader(new InputStreamReader(p.getInputStream()));// 输出缓存
@@ -142,24 +143,22 @@ public class CopyElfs {
             dos.flush();
             dos.writeBytes("exit\n");
             dos.flush();
-            int i=0, j=0;
+
             while ((tmpText = br.readLine()) != null) {
-                //tmpText += "\n";
-                i++;
-                Log.i("std", "std: " + tmpText);
                 list.add(tmpText);
             }
-            Log.i("callElf", "callElf num: " + i);
             while ((tmpText = err.readLine()) != null) {
-                tmpText += "\n"; j++;
-                Log.i("stderr", "stderr: " + tmpText);
+                tmpText = "error: " + tmpText + '\n';
                 list.add(tmpText);
             }
-            Log.i("callElf", "err num: " + j);
+
             // 等待shell子进程执行完成,返回0表示正常结束
             p.waitFor();
         }catch (IOException e){
             e.printStackTrace();
+            list.clear();
+            String exc = "IOException: " + e.getMessage();
+            list.add(exc);
         }
         finally {
             // 关闭流
